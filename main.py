@@ -23,18 +23,15 @@ def getbasicinfo(a):
 
 
 # 检测token.json里的token是否可用，不可用则获取token并重新写入 -ing
-def gettoken(id, pw):
+def gettoken(oauthid, oauthpw):
     tokenfile = json.load(open('data/token.json'))
     datenow = time.strftime("%Y-%m-%d")
     if tokenfile['getdate'] != datenow or tokenfile['token'] == '0000000000':
         # 获取新token
         url = 'https://osu.ppy.sh/oauth/token'
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        body = {"grant_type": "client_credentials", "client_id": id, "client_secret": pw, "scope": "public"}
-        requests.DEFAULT_RETRIES = 5  # 增加重试连接次数
-        s = requests.session()
-        s.keep_alive = False  # 关闭多余连接
-        index = s.get(url, headers=headers, data=body, timeout=300)
+        body = {"grant_type": "client_credentials", "client_id": oauthid, "client_secret": oauthpw, "scope": "public"}
+        index = requests.post(url, headers=headers, data=body, timeout=300, verify=False)
         tokenjsontext = index.text
         jsonn = json.loads(tokenjsontext)
         token = jsonn['accesstoken']

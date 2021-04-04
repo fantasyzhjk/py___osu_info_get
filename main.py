@@ -113,7 +113,7 @@ token = get0token(oauthid, oauthpw)
 
 # 选择功能
 functionselect = str(input('''选择你要用的功能，然后回车
-1.查询特定铺面\n：'''))
+1.查询特定铺面\n你的选择：'''))
 
 clearaaaaa = os.system("cls")  # 清屏
 
@@ -121,3 +121,5 @@ if functionselect == '1':
     bid = str(input('请输入铺面的bid：'))
     output = getbeatmap(bid, token)
     print(output)
+
+input('回车键退出')

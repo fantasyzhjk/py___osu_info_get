@@ -1,9 +1,11 @@
-"""程序主体,查看可以先把能折叠的全部折叠，注释写在外边了"""
+"""查看可以先把能折叠的全部折叠，注释写在外边了"""
 import json
 import time
 import requests
+import os
 
 
+"""-------------------------------各种def-------------------------------"""
 # 获取基本信息 Done
 def getbasicinfo(a):
     data = json.load(open('data/basicinfo.json'))
@@ -23,38 +25,99 @@ def getbasicinfo(a):
 
 
 # 检测token.json里的token是否可用，不可用则获取token并重新写入 -ing
-def gettoken(oauthid, oauthpw):
+def get0token(id, pw):
     tokenfile = json.load(open('data/token.json'))
     datenow = time.strftime("%Y-%m-%d")
     if tokenfile['getdate'] != datenow or tokenfile['token'] == '0000000000':
         # 获取新token
         url = 'https://osu.ppy.sh/oauth/token'
         headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
-        body = {"grant_type": "client_credentials", "client_id": oauthid, "client_secret": oauthpw, "scope": "public"}
-        index = requests.post(url, headers=headers, data=body, timeout=300, verify=False)
+        body = {"grant_type": "client_credentials", "client_id": id, "client_secret": pw, "scope": "public"}
+        index = requests.post(url, headers=headers, json=body, timeout=300)
         tokenjsontext = index.text
         jsonn = json.loads(tokenjsontext)
-        token = jsonn['accesstoken']
-        # 写入token.json
-        tokenWhichIsJson = {'token': token, 'getdate': datenow}
-        whichToWrite = json.dumps(tokenWhichIsJson)
-        tokenjson = open('data/token.json', mode='w')
-        tokenjson.write(whichToWrite)
+        if tokenjsontext == """{"error': 'Client authentication failed'}""":
+            input('oauth身份验证失败，请去个人资料的设置界面检查oauth程序的id与密钥是否与basic.info内的一致\n按下回车退出')
+            exit(0)
+        else:
+            tokena = jsonn['access_token']
+            # 写入token.json
+            tokenWhichIsJson = {'token': tokena, 'getdate': datenow}
+            whichToWrite = json.dumps(tokenWhichIsJson)
+            tokenjson = open('data/token.json', mode='w')
+            tokenjson.write(whichToWrite)
     else:
         file = json.load(open('data/token.json'))
-        token = file['token']
-    return token
+        tokena = file['token']
+    return tokena
 
 
+# 获取铺面信息
+def getbeatmap(bid, accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken}
+    beatmapurltoget = 'https://osu.ppy.sh/api/v2/beatmaps/' + bid
+    beatmapurlgetresult = requests.get(url=beatmapurltoget, headers=headers)
+    beatmapgetresult = beatmapurlgetresult.text
+    beatmapjson = json.loads(beatmapgetresult)
+    out = """-------------------------------------------------------
+    铺面名称：{beatmapset[title]}
+    艺术家：{beatmapset[artist]}
+    铺面作者：{beatmapset[creator]}
+    铺面作者id：{beatmapset[user_id]}
+    试听链接：https:{beatmapset[preview_url]}
+    总游玩数：{beatmapset[play_count]}
+    
+    Bid：{id}
+    Sid：{beatmapset_id}
+    铺面模式：{mode}
+    状态：{status}
+    难度：{difficulty_rating}
+    难度名：{version}
+    有无故事板：{beatmapset[storyboard]}
+    有无视频：{beatmapset[video]}
+    该难度总游玩数：{playcount}
+    该难度总pass数：{passcount}
+    最后更新：{last_updated}
+    Rank时间：{beatmapset[ranked_date]}
+    铺面url：{url}
+    铺面tags：{beatmapset[tags]}
+    
+    单note数：{count_circles}
+    滑条数：{count_sliders}
+    转盘数：{count_spinners}
+    
+    总长度：{total_length}
+    去除休息段的长度：{hit_length}
+    
+    AR：{ar}
+    OD：{accuracy}
+    CS：{cs}
+    bpm：{bpm}
+    HP：{drain}
+    最大连击：{max_combo}
+    
+    -------------------------------------------------------
+    """.format(**beatmapjson)
+    return out
+
+
+"""-------------------------------程序主体-------------------------------"""
+
+# 获取最基本的信息
 oauthpw = getbasicinfo('pw')
 oauthid = getbasicinfo('id')
 username = getbasicinfo('name')
 userid = getbasicinfo('userid')
+token = get0token(oauthid, oauthpw)
 
-token = gettoken(oauthid, oauthpw)
+# 选择功能
+functionselect = str(input('''选择你要用的功能，然后回车
+1.查询特定铺面\n：'''))
 
-print('username:' + username)
-print('userid' + userid)
-print('oauthid:' + oauthid)
-print('oauthpw:' + oauthpw)
-print('token:' + token)
+clearaaaaa = os.system("cls")  # 清屏
+
+if functionselect == '1':
+    bid = str(input('请输入铺面的bid：'))
+    output = getbeatmap(bid, token)
+    print(output)

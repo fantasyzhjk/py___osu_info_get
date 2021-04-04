@@ -56,10 +56,10 @@ def get0token(id, pw):
 def getbeatmap(bid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
                'Authorization': 'Bearer ' + accesstoken}
-    beatmapurltoget = 'https://osu.ppy.sh/api/v2/beatmaps/' + bid
-    beatmapurlgetresult = requests.get(url=beatmapurltoget, headers=headers)
-    beatmapgetresult = beatmapurlgetresult.text
-    beatmapjson = json.loads(beatmapgetresult)
+    beatmap_url_to_get = 'https://osu.ppy.sh/api/v2/beatmaps/' + bid
+    beatmap_url_get_result = requests.get(url=beatmap_url_to_get, headers=headers)
+    beatmap_get_result = beatmap_url_get_result.text
+    beatmap_json = json.loads(beatmap_get_result)
     out = """-------------------------------------------------------
     铺面名称：{beatmapset[title]}
     艺术家：{beatmapset[artist]}
@@ -98,7 +98,19 @@ def getbeatmap(bid, accesstoken):
     最大连击：{max_combo}
     
     -------------------------------------------------------
-    """.format(**beatmapjson)
+    """.format(**beatmap_json)
+    return out
+
+
+# 获取玩家信息
+def getuser(username, accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken}
+    user_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + username + '/osu'
+    user_url_get_result = requests.get(url=user_url_to_get, headers=headers)
+    user_get_result = user_url_get_result.text
+    user_json = json.loads(user_get_result)
+    out = """""".format(**user_json)
     return out
 
 
@@ -113,13 +125,26 @@ token = get0token(oauthid, oauthpw)
 
 # 选择功能
 functionselect = str(input('''选择你要用的功能，然后回车
-1.查询特定铺面\n你的选择：'''))
+1.查询特定铺面
+2.查询玩家信息
+你的选择：'''))
 
 clearaaaaa = os.system("cls")  # 清屏
 
 if functionselect == '1':
     bid = str(input('请输入铺面的bid：'))
     output = getbeatmap(bid, token)
+    print(output)
+elif functionselect == '2':
+    playerselect = str(input('1.你自己\n2.其他玩家'))
+    if playerselect == '1':
+        playertoget = username
+    elif playerselect == '2':
+        playertoget = str(input('请输入玩家名：'))
+    else:
+        input('参数错误，请重新运行')
+        exit(0)
+    output = getuser(playertoget, token)
     print(output)
 
 input('回车键退出')

@@ -111,8 +111,17 @@ def getuser(userid, accesstoken):
     user_url_get_result = requests.get(url=user_url_to_get, headers=headers)
     user_get_result = user_url_get_result.text
     user_json = json.loads(user_get_result)
-    print (user_get_result)
-    out = """""".format(**user_json)
+    # print (user_json) 好家伙zh牛逼
+    out = """-------------------------------------------------------
+{username}
+总PP：{statistics[pp]}
+游戏排名：{statistics[global_rank]}
+游戏次数：{statistics[play_count]}
+准确率：{statistics[hit_accuracy]}%
+Rank分数：{statistics[ranked_score]}
+总分数：{statistics[total_score]}
+-------------------------------------------------------
+    """.format(**user_json)
     return out
 
 

@@ -32,7 +32,7 @@ def get0token(id, pw):
     if tokenfile['getdate'] != datenow or tokenfile['token'] == '0000000000':
         # 获取新token
         url = 'https://osu.ppy.sh/oauth/token'
-        headers = {'Accept': 'application/json', 'Content-Type': 'application/json'}
+        headers = {'Accept': 'application/json', 'Content-Type': 'application/json', 'Connection': 'close'}
         body = {"grant_type": "client_credentials", "client_id": id, "client_secret": pw, "scope": "public"}
         index = requests.post(url, headers=headers, json=body, timeout=300)
         tokenjsontext = index.text
@@ -56,7 +56,7 @@ def get0token(id, pw):
 # 获取铺面信息
 def getbeatmap(bid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
-               'Authorization': 'Bearer ' + accesstoken}
+               'Authorization': 'Bearer ' + accesstoken, 'Connection': 'close'}
     beatmap_url_to_get = 'https://osu.ppy.sh/api/v2/beatmaps/' + bid
     beatmap_url_get_result = requests.get(url=beatmap_url_to_get, headers=headers)
     beatmap_get_result = beatmap_url_get_result.text
@@ -104,13 +104,14 @@ def getbeatmap(bid, accesstoken):
 
 
 # 获取玩家信息
-def getuser(username, accesstoken):
+def getuser(userid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
-               'Authorization': 'Bearer ' + accesstoken}
-    user_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + username + '/osu'
+               'Authorization': 'Bearer ' + accesstoken, 'Connection': 'close'}
+    user_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/osu'
     user_url_get_result = requests.get(url=user_url_to_get, headers=headers)
     user_get_result = user_url_get_result.text
     user_json = json.loads(user_get_result)
+    print (user_get_result)
     out = """""".format(**user_json)
     return out
 
@@ -139,9 +140,9 @@ if functionselect == '1':
 elif functionselect == '2':
     playerselect = str(input('1.你自己\n2.其他玩家'))
     if playerselect == '1':
-        playertoget = username
+        playertoget = userid
     elif playerselect == '2':
-        playertoget = str(input('请输入玩家名：'))
+        playertoget = str(input('请输入玩家id(注意，是id)：'))
     else:
         input('参数错误，请重新运行')
         exit(0)

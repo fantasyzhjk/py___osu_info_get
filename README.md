@@ -14,7 +14,8 @@
 |获取玩家bp|ing|
 |最近游玩信息记录|ing|
 |玩家信息变化记录|ing|
-游玩信息以及玩家信息分析|ing|
+|游玩信息以及玩家信息分析|ing|
+|铺面查找推荐（来自蠢狼）|ing|
 |其他功能，想不起来，帮忙想想|欧内该！|
 
 ### 为什么要写它呢？🚀️ 
@@ -40,8 +41,14 @@
 4.使用python打开Firstuse.py设置基本信息  
 5.使用其他功能  
 
-### 目前需要的外置库
-None...
+### 目前需要的库
+建议全部pip install一遍  
+json  
+time  
+requests  
+ndg-httpsclient  
+pyopenssl  
+pyasn1  
 
 ### 如何获取相关信息🚀️ 
  
@@ -79,3 +86,12 @@ oauth：
 |zh|8|
 |kj|3|
 |k3|1|
+
+### 感谢🚀️
+|名单|
+|---|
+|zh|
+|k3|
+|kj|
+|蠢狼|
+|nanahirasuki|

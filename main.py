@@ -4,8 +4,9 @@ import time
 import requests
 import os
 
-
 """-------------------------------各种def-------------------------------"""
+
+
 # 获取基本信息 Done
 def getbasicinfo(a):
     data = json.load(open('data/basicinfo.json'))

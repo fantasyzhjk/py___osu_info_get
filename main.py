@@ -65,43 +65,43 @@ def getbeatmap(bid, accesstoken):
     beatmap_get_result = beatmap_url_get_result.text
     beatmap_json = json.loads(beatmap_get_result)
     out = """-------------------------------------------------------
-    铺面名称：{beatmapset[title]}
-    艺术家：{beatmapset[artist]}
-    铺面作者：{beatmapset[creator]}
-    铺面作者id：{beatmapset[user_id]}
-    试听链接：https:{beatmapset[preview_url]}
-    总游玩数：{beatmapset[play_count]}
-    
-    Bid：{id}
-    Sid：{beatmapset_id}
-    铺面模式：{mode}
-    状态：{status}
-    难度：{difficulty_rating}
-    难度名：{version}
-    有无故事板：{beatmapset[storyboard]}
-    有无视频：{beatmapset[video]}
-    该难度总游玩数：{playcount}
-    该难度总pass数：{passcount}
-    最后更新：{last_updated}
-    Rank时间：{beatmapset[ranked_date]}
-    铺面url：{url}
-    铺面tags：{beatmapset[tags]}
-    
-    单note数：{count_circles}
-    滑条数：{count_sliders}
-    转盘数：{count_spinners}
-    
-    总长度：{total_length}
-    去除休息段的长度：{hit_length}
-    
-    AR：{ar}
-    OD：{accuracy}
-    CS：{cs}
-    bpm：{bpm}
-    HP：{drain}
-    最大连击：{max_combo}
-    
-    -------------------------------------------------------
+铺面名称：{beatmapset[title]}
+艺术家：{beatmapset[artist]}
+铺面作者：{beatmapset[creator]}
+铺面作者id：{beatmapset[user_id]}
+试听链接：https:{beatmapset[preview_url]}
+总游玩数：{beatmapset[play_count]}
+
+Bid：{id}
+Sid：{beatmapset_id}
+铺面模式：{mode}
+状态：{status}
+难度：{difficulty_rating}
+难度名：{version}
+有无故事板：{beatmapset[storyboard]}
+有无视频：{beatmapset[video]}
+该难度总游玩数：{playcount}
+该难度总pass数：{passcount}
+最后更新：{last_updated}
+Rank时间：{beatmapset[ranked_date]}
+铺面url：{url}
+铺面tags：{beatmapset[tags]}
+
+单note数：{count_circles}
+滑条数：{count_sliders}
+转盘数：{count_spinners}
+
+总长度：{total_length}
+去除休息段的长度：{hit_length}
+
+AR：{ar}
+OD：{accuracy}
+CS：{cs}
+bpm：{bpm}
+HP：{drain}
+最大连击：{max_combo}
+
+-------------------------------------------------------
     """.format(**beatmap_json)
     return out
 
@@ -123,7 +123,7 @@ def getuser(userid, accesstoken):
     准确率：{statistics[hit_accuracy]}%
     Rank分数：{statistics[ranked_score]}
     总分数：{statistics[total_score]}
-    -------------------------------------------------------
+-------------------------------------------------------
     """.format(**user_json)
     print(out)
     more_info_sec = str(input("想要更详细的信息？按下Y再回车吧！(也可以直接回车走人哦)"))
@@ -160,7 +160,7 @@ def getuser(userid, accesstoken):
         S数：{statistics[grade_counts][s]}
         SH数：{statistics[grade_counts][sh]}
         A数：{statistics[grade_counts][a]}
-        -------------------------------------------------------
+-------------------------------------------------------
         """.format(**user_json))
     else:
         pass

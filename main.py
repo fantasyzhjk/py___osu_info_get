@@ -26,16 +26,16 @@ def getbasicinfo(a):
 
 # 获取token
 def get0token(id, pw):
-        # 获取新token
-        url = 'https://osu.ppy.sh/oauth/token'
-        headers = {'Accept': 'application/json',
-                   'Content-Type': 'application/json', 'Connection': 'close'}
-        body = {"grant_type": "client_credentials",
-                "client_id": id, "client_secret": pw, "scope": "public"}
-        index = requests.post(url, headers=headers, json=body, timeout=300)
-        tokenjsontext = index.text
-        jsonn = json.loads(tokenjsontext)
-        tokena = jsonn['access_token']
+    # 获取新token
+    url = 'https://osu.ppy.sh/oauth/token'
+    headers = {'Accept': 'application/json',
+               'Content-Type': 'application/json', 'Connection': 'close'}
+    body = {"grant_type": "client_credentials",
+            "client_id": id, "client_secret": pw, "scope": "public"}
+    index = requests.post(url, headers=headers, json=body, timeout=300)
+    tokenjsontext = index.text
+    jsonn = json.loads(tokenjsontext)
+    tokena = jsonn['access_token']
     return tokena
 
 

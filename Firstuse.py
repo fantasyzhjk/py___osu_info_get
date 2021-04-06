@@ -1,7 +1,6 @@
 """第一次使用的基本设置，查看可以先把能折叠的全部折叠，注释写在外边了"""
 
 import json
-import time
 import os
 
 print('''该程序用于设置基本信息，和初始化token.json（不初始化使用main.py的特定功能会百分百报错）
@@ -28,12 +27,4 @@ filebasicinfo = open("data/basicinfo.json", mode="w")
 filebasicinfo.write(basicinfo_json)
 filebasicinfo.close()
 
-# 初始化token.json
-datenow = time.strftime("%Y-%m-%d")
-tokenjson = {'token': "0000000000", 'getdate': datenow}
-tokenfile = json.dumps(tokenjson)
-filetoken = open("data/token.json", mode='w')
-filetoken.write(tokenfile)
-filetoken.close()
-
-input('''\n尝试写入完成，请查看data文件夹下的basicinfo.json和token.json文件进行检查\n\n按下回车退出''')
+input('''\n尝试写入完成，请查看data文件夹下的basicinfo.json文件进行检查\n\n按下回车退出''')

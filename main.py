@@ -1,6 +1,5 @@
 """查看可以先把能折叠的全部折叠，注释写在外边了"""
 import json
-import time
 import requests
 import os
 
@@ -25,11 +24,8 @@ def getbasicinfo(a):
     return result
 
 
-# 检测token.json里的token是否可用，不可用则获取token并重新写入 -ing
+# 获取token
 def get0token(id, pw):
-    tokenfile = json.load(open('data/token.json'))
-    datenow = time.strftime("%Y-%m-%d")
-    if tokenfile['getdate'] != datenow or tokenfile['token'] == '0000000000':
         # 获取新token
         url = 'https://osu.ppy.sh/oauth/token'
         headers = {'Accept': 'application/json',
@@ -39,19 +35,7 @@ def get0token(id, pw):
         index = requests.post(url, headers=headers, json=body, timeout=300)
         tokenjsontext = index.text
         jsonn = json.loads(tokenjsontext)
-        if tokenjsontext == """{"error': 'Client authentication failed'}""":
-            input('oauth身份验证失败，请去个人资料的设置界面检查oauth程序的id与密钥是否与basic.info内的一致\n按下回车退出')
-            exit(0)
-        else:
-            tokena = jsonn['access_token']
-            # 写入token.json
-            tokenWhichIsJson = {'token': tokena, 'getdate': datenow}
-            whichToWrite = json.dumps(tokenWhichIsJson)
-            tokenjson = open('data/token.json', mode='w')
-            tokenjson.write(whichToWrite)
-    else:
-        file = json.load(open('data/token.json'))
-        tokena = file['token']
+        tokena = jsonn['access_token']
     return tokena
 
 

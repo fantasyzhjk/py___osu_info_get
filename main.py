@@ -100,56 +100,65 @@ def getuser(userid, accesstoken):
     user_json = json.loads(user_get_result)
     # print (user_json) 好家伙zh牛逼
     out = """-------------------------------------------------------
-    {username}
-    总PP：{statistics[pp]}
-    游戏排名：{statistics[global_rank]}
-    游戏次数：{statistics[play_count]}
-    准确率：{statistics[hit_accuracy]}%
-    Rank分数：{statistics[ranked_score]}
-    总分数：{statistics[total_score]}
+{username}
+总PP：{statistics[pp]}
+游戏排名：{statistics[global_rank]}
+游戏次数：{statistics[play_count]}
+准确率：{statistics[hit_accuracy]}%
+Rank分数：{statistics[ranked_score]}
+总分数：{statistics[total_score]}
 -------------------------------------------------------
     """.format(**user_json)
     print(out)
     more_info_sec = str(input("想要更详细的信息？按下Y再回车吧！(也可以直接回车走人哦)"))
     if more_info_sec == 'Y' or more_info_sec == 'y':
-        clearaaaaa = os.system("cls")  # 清屏
+        clear_screen = os.system("cls")  # 清屏
         print("""-------------------------------------------------------
-        用户名：{username}
-        用户id：{id}
-        头像：{avatar_url}
-        地区：{location}
-        注册时间：{join_date}
-        游玩模式：{playmode}
-        设备：{playstyle}
-        喜欢的铺面数：{loved_beatmapset_count}
-        曾用名：{previous_usernames}
-        最近是否活跃：{is_active}
-        目前是否在线：{is_online}
-        是否为撒泼特：{is_supporter}
-        兴趣：{interests}
+用户名：{username}
+用户id：{id}
+头像：{avatar_url}
+地区：{location}
+注册时间：{join_date}
+游玩模式：{playmode}
+设备：{playstyle}
+喜欢的铺面数：{loved_beatmapset_count}
+曾用名：{previous_usernames}
+最近是否活跃：{is_active}
+目前是否在线：{is_online}
+是否为撒泼特：{is_supporter}
+兴趣：{interests}
 
-        等级：{statistics[level][current]}
-        PP：{statistics[pp]}
-        Rank分数：{statistics[ranked_score]}
-        总分数：{statistics[total_score]}
-        准确率：{statistics[hit_accuracy]}%
-        游玩数：{statistics[play_count]}
-        游玩时间：{statistics[play_time]}s （以后优化）
-        世界排名：{statistics[global_rank]}
-        国内排名：{statistics[country_rank]}
-        最高连击：{statistics[maximum_combo]}x
+等级：{statistics[level][current]}
+PP：{statistics[pp]}
+Rank分数：{statistics[ranked_score]}
+总分数：{statistics[total_score]}
+准确率：{statistics[hit_accuracy]}%
+游玩数：{statistics[play_count]}
+游玩时间：{statistics[play_time]}s （以后优化）
+世界排名：{statistics[global_rank]}
+国内排名：{statistics[country_rank]}
+最高连击：{statistics[maximum_combo]}x
 
-        SS数：{statistics[grade_counts][ss]}
-        SSH数：{statistics[grade_counts][ssh]}
-        S数：{statistics[grade_counts][s]}
-        SH数：{statistics[grade_counts][sh]}
-        A数：{statistics[grade_counts][a]}
+SS数：{statistics[grade_counts][ss]}
+SSH数：{statistics[grade_counts][ssh]}
+S数：{statistics[grade_counts][s]}
+SH数：{statistics[grade_counts][sh]}
+A数：{statistics[grade_counts][a]}
 -------------------------------------------------------
         """.format(**user_json))
     else:
         pass
     return
 
+
+def get_user_recent(userid,accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken, 'Connection': 'close'}
+    recent_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/osu'
+    recent_url_get_result = requests.get(url=user_url_to_get, headers=headers)
+    recent_get_result = user_url_get_result.text
+    recent_json = json.loads(user_get_result)
+    out =
 
 """-------------------------------程序主体-------------------------------"""
 
@@ -164,6 +173,7 @@ token = get0token(oauthid, oauthpw)
 functionselect = str(input('''选择你要用的功能，然后回车
 1.查询特定铺面
 2.查询玩家信息
+3.获取最近游玩
 你的选择：'''))
 
 clearaaaaa = os.system("cls")  # 清屏
@@ -182,5 +192,7 @@ elif functionselect == '2':
         input('参数错误，请重新运行\n按下回车退出')
         exit(0)
     getuser(playertoget, token)
+elif functionselect == '3':
+
 
 input('回车键退出')

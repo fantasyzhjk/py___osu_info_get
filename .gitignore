@@ -1,5 +1,10 @@
 userdata.json
 user.json
-data/token.json
-data/basicinfo.json
-1.py
+data/
+recent.json
+build/
+dist/
+main.spec
+__pycache__/
+main
+note.md

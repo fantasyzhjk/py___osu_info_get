@@ -233,7 +233,6 @@ def get_user_recent(userid,accesstoken):
             'pp: {pp}\n'
             '是否Perfect： {perfect}\n'
             '游玩时间： {created_at}\n'
-            '位于bp列表： {best_id}\n'
             'Replay： {replay}\n'
             '300： {statistics[count_300]}\n'
             '100： {statistics[count_100]}\n'
@@ -241,10 +240,140 @@ def get_user_recent(userid,accesstoken):
             'miss： {statistics[count_miss]}\n'
             '-------------------------------------------------------').format(**recent_score)
             print(out)
-            print('最上边的是最后游玩的成绩，往下以此类推')
+        print('最上边的是最后游玩的成绩，往下以此类推')
     else:
         print('该玩家最近没有游玩记录')
 
+
+# 列举玩家bp
+def list_user_bp(userid,accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken}
+    bp_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/scores/best'
+    # 用户选择查询bp的数量
+    limit_input = input('请输入要查询bp的数量（从bp1开始,范围1-100 默认5)：')
+    if limit_input != '':
+        limit_input = int(limit_input)
+        if limit_input >= 1 and limit_input <= 100:
+            limit = str(limit_input)
+        else:
+            limit = '5'
+    else:
+        limit = '5'
+    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit, 'offset':'1'}
+    bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
+    bp_get_result = bp_url_get_result.text
+    bp_json = json.loads(bp_get_result)
+    clearaaaa = cleanscreen()
+    # print(bp_get_result)
+    if bp_json != []:
+        for bp_score in bp_json:
+            out = ('-------------------------------------------------------\n'
+            '分数id： {id}\n\n'
+            '标题： {beatmapset[title]}\n'
+            '难度： {beatmap[difficulty_rating]}\n'
+            '难度名： {beatmap[version]}\n'
+            '铺面sid： {beatmap[id]}\n'
+            '铺面bid： {beatmapset[id]}\n'
+            '游戏模式： {beatmap[mode]}\n'
+            '圈圈数： {beatmap[count_circles]}\n'
+            '滑条数： {beatmap[count_sliders]}\n'
+            '转盘数： {beatmap[count_spinners]}\n'
+            'AR： {beatmap[ar]}\n'
+            'CS： {beatmap[cs]}\n'
+            'OD： {beatmap[accuracy]}\n'
+            'Bpm： {beatmap[bpm]}\n'
+            'HP： {beatmap[drain]}\n'
+            '总长度： {beatmap[total_length]}\n'
+            '去除休息时间： {beatmap[hit_length]}\n'
+            'url： {beatmap[url]}\n'
+            '分数： {score}\n'
+            'Acc:  {accuracy}\n'
+            '最大连击： {max_combo}\n'
+            'mods: {mods}\n'
+            'Rank: {rank}\n'
+            'pp: {pp}\n'
+            '是否Perfect： {perfect}\n'
+            '游玩时间： {created_at}\n
+            'Replay： {replay}\n'
+            '300： {statistics[count_300]}\n'
+            '100： {statistics[count_100]}\n'
+            '50： {statistics[count_50]}\n'
+            'miss： {statistics[count_miss]}\n'
+            '-------------------------------------------------------').format(**bp_score)
+            print(out)
+        print('最上边的是bp1，往下以此类推')
+    else:
+        print('查询失败')
+
+
+# 获取玩家指定bp
+def get_user_bp(userid,accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken}
+    bp_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/scores/best'
+    # 用户选择查询bp的数量
+    limit_input = input('请输入要查询的bp（1-100 默认1)：')
+    if limit_input != '':
+        limit_input = int(limit_input)
+        if limit_input >= 1 and limit_input <= 100:
+            limit = str(limit_input)
+        else:
+            limit = '1'
+    else:
+        limit = '1'
+    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit, 'offset':'1'}
+    bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
+    bp_get_result = bp_url_get_result.text
+    bp_json = json.loads(bp_get_result)
+    clearaaaa = cleanscreen()
+    # print(bp_get_result)
+    limit = int(limit)
+    limit = limit - 1
+    if bp_json != []:
+        out = ('-------------------------------------------------------\n'
+        '分数id： {id}\n'
+        '玩家id： {user_id}\n'
+        '玩家名： {user[username]}\n'
+        '\n铺面信息：\n'
+        '标题： {beatmapset[title]}\n'
+        '难度： {beatmap[difficulty_rating]}\n'
+        '难度名： {beatmap[version]}\n'
+        '铺面sid： {beatmap[id]}\n'
+        '铺面bid： {beatmapset[id]}\n'
+        '游戏模式： {beatmap[mode]}\n'
+        '铺面状态： {beatmap[status]}\n'
+        '圈圈数： {beatmap[count_circles]}\n'
+        '滑条数： {beatmap[count_sliders]}\n'
+        '转盘数： {beatmap[count_spinners]}\n'
+        'AR： {beatmap[ar]}\n'
+        'CS： {beatmap[cs]}\n'
+        'OD： {beatmap[accuracy]}\n'
+        'Bpm： {beatmap[bpm]}\n'
+        'HP： {beatmap[drain]}\n'
+        '总长度： {beatmap[total_length]}\n'
+        '去除休息时间： {beatmap[hit_length]}\n'
+        '总游玩数： {beatmap[playcount]}\n'
+        '总pass数： {beatmap[passcount]}\n'
+        'url： {beatmap[url]}\n'
+        '\n成绩：\n'
+        '分数： {score}\n'
+        'Acc:  {accuracy}\n'
+        '最大连击： {max_combo}\n'
+        'mods: {mods}\n'
+        'Rank: {rank}\n'
+        'pp: {pp}\n'
+        '是否Perfect： {perfect}\n'
+        '游玩时间： {created_at}\n'
+        'Replay： {replay}\n'
+        '300： {statistics[count_300]}\n'
+        '100： {statistics[count_100]}\n'
+        '50： {statistics[count_50]}\n'
+        'miss： {statistics[count_miss]}\n'
+        '-------------------------------------------------------').format(**bp_json[limit])
+        print(out)
+    else:
+        print('查询失败')
 
 
 """-------------------------------程序主体-------------------------------"""
@@ -256,12 +385,20 @@ username = getbasicinfo('name')
 userid = getbasicinfo('userid')
 token = get0token(oauthid, oauthpw)
 
+clearaaaaa = cleanscreen()  # 清屏
+
 # 选择功能
-functionselect = str(input('''选择你要用的功能，然后回车
+functionselect = str(input('''欢迎使用，本程序98%由zh编写
+在此谢谢zh
+zh我爱你！！！！
+
+接下来选择你要用的功能，然后按下回车
 1.查询特定铺面
 2.查询玩家信息
 3.名字转id
 4.获取最近游玩
+5.获取并列举玩家bp
+6.获取玩家指定bp
 你的选择：'''))
 
 clearaaaaa = cleanscreen()  # 清屏
@@ -297,12 +434,34 @@ try:
         else:
             input('参数错误，请重新运行\n按下回车退出')
             exit(0)
+    elif functionselect == '5':
+        playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        if playerselect == '1':
+            playertoget = userid
+            list_user_bp(playertoget, token)
+        elif playerselect == '2':
+            playertoget = str(input('请输入玩家名：'))
+            list_user_bp(str(searchUser(playertoget, token)), token)
+        else:
+            input('参数错误，请重新运行\n按下回车退出')
+            exit(0)
+    elif functionselect == '6':
+        playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        if playerselect == '1':
+            playertoget = userid
+            get_user_bp(playertoget, token)
+        elif playerselect == '2':
+            playertoget = str(input('请输入玩家名：'))
+            get_user_bp(str(searchUser(playertoget, token)), token)
+        else:
+            input('参数错误，请重新运行\n按下回车退出')
+            exit(0)
     else:
         raise
 except Exception as e:
-    print("查询出错 请检查参数")
-    # print(e)
-if (platform.system()=='Windows'):
-    os.system("pause")
+    clearaaaaa = cleanscreen()  # 清屏
+    print("查询出错 以下为错误信息 请提交issue")
+    print(e)
+#if (platform.system()=='Windows'):
+#    os.system("pause")
 # input('回车键退出')
-

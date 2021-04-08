@@ -389,6 +389,7 @@ clearaaaaa = cleanscreen()  # 清屏
 
 # 选择功能
 functionselect = str(input('''欢迎使用，本程序98%由zh编写
+（zh：？？？）（frz:你不知道这叫商业互吹吗！）
 在此谢谢zh
 zh我爱你！！！！
 

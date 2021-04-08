@@ -6,6 +6,7 @@ import platform
 
 """-------------------------------各种def-------------------------------"""
 
+# zh神写的清屏
 def cleanscreen():
     if(platform.system()=='Windows'):
         os.system("cls") #Windows系统
@@ -14,7 +15,8 @@ def cleanscreen():
     else:
         pass
 
-# 获取基本信息 Done
+
+# 获取基本信息
 def getbasicinfo(a):
     data = json.load(open('data/basicinfo.json'))
     if a == 'name':
@@ -93,6 +95,7 @@ def getbeatmap(bid, accesstoken):
     "最大连击：{max_combo}").format(**beatmap_json)
     return out
 
+
 # 搜索玩家
 def searchUser(username, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
@@ -104,6 +107,7 @@ def searchUser(username, accesstoken):
     user_json = json.loads(user_get_result)
     return user_json['user']['data'][0]['id']
 
+
 # 获取玩家信息
 def getuser(userid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
@@ -113,53 +117,52 @@ def getuser(userid, accesstoken):
     user_get_result = user_url_get_result.text
     user_json = json.loads(user_get_result)
     # print (user_json) 好家伙zh牛逼
-    out = """-------------------------------------------------------
-{username}
-总PP：{statistics[pp]}
-游戏排名：{statistics[global_rank]}
-游戏次数：{statistics[play_count]}
-准确率：{statistics[hit_accuracy]}%
-Rank分数：{statistics[ranked_score]}
-总分数：{statistics[total_score]}
--------------------------------------------------------
-    """.format(**user_json)
+    out = ("-------------------------------------------------------"
+    "\n{username}\n"
+    "总PP：{statistics[pp]}\n"
+    "游戏排名：{statistics[global_rank]}\n"
+    "游戏次数：{statistics[play_count]}\n"
+    "准确率：{statistics[hit_accuracy]}%\n"
+    "Rank分数：{statistics[ranked_score]}\n"
+    "总分数：{statistics[total_score]}\n"
+    "-------------------------------------------------------").format(**user_json)
     print(out)
     more_info_sec = str(input("想要更详细的信息？按下Y再回车吧！(也可以直接回车走人哦)"))
     if more_info_sec == 'Y' or more_info_sec == 'y':
         clear_screen = cleanscreen()  # 清屏
-        print("""-------------------------------------------------------
-用户名：{username}
-用户id：{id}
-头像：{avatar_url}
-地区：{location}
-注册时间：{join_date}
-游玩模式：{playmode}
-设备：{playstyle}
-喜欢的铺面数：{loved_beatmapset_count}
-曾用名：{previous_usernames}
-最近是否活跃：{is_active}
-目前是否在线：{is_online}
-是否为撒泼特：{is_supporter}
-兴趣：{interests}
+        out = ("-------------------------------------------------------\n"
+        "用户名：{username}\n"
+        "用户id：{id}\n"
+        "头像：{avatar_url}\n"
+        "地区：{location}\n"
+        "注册时间：{join_date}\n"
+        "游玩模式：{playmode}\n"
+        "设备：{playstyle}\n"
+        "喜欢的铺面数：{loved_beatmapset_count}\n"
+        "曾用名：{previous_usernames}\n"
+        "最近是否活跃：{is_active}\n"
+        "目前是否在线：{is_online}\n"
+        "是否为撒泼特：{is_supporter}\n"
+        "兴趣：{interests}\n\n"
 
-等级：{statistics[level][current]}
-PP：{statistics[pp]}
-Rank分数：{statistics[ranked_score]}
-总分数：{statistics[total_score]}
-准确率：{statistics[hit_accuracy]}%
-游玩数：{statistics[play_count]}
-游玩时间：{statistics[play_time]}s （以后优化）
-世界排名：{statistics[global_rank]}
-国内排名：{statistics[country_rank]}
-最高连击：{statistics[maximum_combo]}x
+        "等级：{statistics[level][current]}\n"
+        "PP：{statistics[pp]}\n"
+        "Rank分数：{statistics[ranked_score]}\n"
+        "总分数：{statistics[total_score]}\n"
+        "准确率：{statistics[hit_accuracy]}%\n"
+        "游玩数：{statistics[play_count]}\n"
+        "游玩时间：{statistics[play_time]}s\n"
+        "世界排名：{statistics[global_rank]}\n"
+        "国内排名：{statistics[country_rank]}\n"
+        "最高连击：{statistics[maximum_combo]}x\n\n"
 
-SS数：{statistics[grade_counts][ss]}
-SSH数：{statistics[grade_counts][ssh]}
-S数：{statistics[grade_counts][s]}
-SH数：{statistics[grade_counts][sh]}
-A数：{statistics[grade_counts][a]}
--------------------------------------------------------
-        """.format(**user_json))
+        "SS数：{statistics[grade_counts][ss]}\n"
+        "SSH数：{statistics[grade_counts][ssh]}\n"
+        "S数：{statistics[grade_counts][s]}\n"
+        "SH数：{statistics[grade_counts][sh]}\n"
+        "A数：{statistics[grade_counts][a]}\n"
+        "-------------------------------------------------------").format(**user_json)
+        print(out)
     else:
         pass
     return
@@ -263,6 +266,7 @@ functionselect = str(input('''选择你要用的功能，然后回车
 
 clearaaaaa = cleanscreen()  # 清屏
 
+# 功能实现
 try:
     if functionselect == '1':
         bid = str(input('请输入铺面的bid：'))

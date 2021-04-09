@@ -1,7 +1,46 @@
 """第一次使用的基本设置，查看可以先把能折叠的全部折叠，注释写在外边了"""
 
 import json
+import requests
 import os
+import platform
+
+
+def cleanscreen():
+    if(platform.system()=='Windows'):
+        os.system("cls") #Windows系统
+    elif(platform.system()=='Linux'):
+        os.system('clear') #Linux系统
+    else:
+        pass
+
+
+def searchUser(username, accesstoken):
+    headers = {"Accept": "application/json", "Content-Type": "application/json",
+               'Authorization': 'Bearer ' + accesstoken}
+    params = {'mode': 'user', 'query': username}
+    user_url_to_get = 'https://osu.ppy.sh/api/v2/search'
+    user_url_get_result = requests.get(url=user_url_to_get, headers=headers, params=params)
+    user_get_result = user_url_get_result.text
+    user_json = json.loads(user_get_result)
+    return user_json['user']['data'][0]['id']
+
+
+def get0token(id, pw):
+    # 获取新token
+    url = 'https://osu.ppy.sh/oauth/token'
+    headers = {'Accept': 'application/json',
+               'Content-Type': 'application/json'}
+    body = {"grant_type": "client_credentials",
+            "client_id": id, "client_secret": pw, "scope": "public"}
+    index = requests.post(url, headers=headers, json=body, timeout=300)
+    tokenjsontext = index.text
+    jsonn = json.loads(tokenjsontext)
+    tokena = jsonn['access_token']
+    return tokena
+
+
+clearaaaaa = cleanscreen()  # 清屏
 
 print('''该程序用于设置基本信息，和初始化token.json（不初始化使用main.py的特定功能会百分百报错）
 
@@ -11,13 +50,19 @@ print('''该程序用于设置基本信息，和初始化token.json（不初始�
    按下回车开始设置''')  # 使用说明
 input()
 
-clearaaaaa = os.system("cls")  # 清屏
+
+clearaaaaa = cleanscreen()  # 清屏
 
 # 用户输入basicinfo Done
 user = str(input("请输入玩家名："))
 v2id = str(input("请输入你oauth程序的id："))
 v2pw = str(input("请输入你oauth程序的密钥："))
-userid = str(input("请输入玩家的id："))
+
+print('\n正在尝试写入...')
+
+token = str(get0token(v2id, v2pw))
+
+userid = str(searchUser(user, token))
 
 
 # 将basicinfo写入文件

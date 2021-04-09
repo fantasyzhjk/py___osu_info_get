@@ -376,22 +376,53 @@ def get_user_bp(userid,accesstoken):
         print('查询失败')
 
 
+# 获取pp+信息
+def get_pp_plus(userid):    
+    url = 'https://syrin.me/pp+/api/user/' + userid + '/'
+    index = requests.get(url=url)
+    pp_plus = json.loads(index.text)
+    return pp_plus['user_data']
+
+
+# 对pp+信息进行排版
+def pp_plus_out(inputa):
+    out = ('-------------------------------------------------------\n'
+    '玩家{UserName}的pp+数据如下\n\n'
+    'Total:{PerformanceTotal}\n'
+    'Aim:{AimTotal}\n'
+    'Jump:{JumpAimTotal}\n'
+    'Flow:{FlowAimTotal}\n'
+    'Precision:{PrecisionTotal}\n'
+    'Speed:{SpeedTotal}\n'
+    'Stamina:{StaminaTotal}\n'
+    'Accuracy:{AccuracyTotal}\n'
+    '-------------------------------------------------------').format(**inputa)
+    return out
+
 """-------------------------------程序主体-------------------------------"""
+
+print('初始化...')
 
 # 获取最基本的信息
 oauthpw = getbasicinfo('pw')
 oauthid = getbasicinfo('id')
 username = getbasicinfo('name')
 userid = getbasicinfo('userid')
+print('获取oauth token...')
 token = get0token(oauthid, oauthpw)
+
+print('Done')
 
 clearaaaaa = cleanscreen()  # 清屏
 
 # 选择功能
 functionselect = str(input('''欢迎使用，本程序98%由zh编写
-（zh：？？？）（frz:你不知道这叫商业互吹吗！）
+（zh：？？？）（frz:你不知道这叫商业互吹吗！！！）
 在此谢谢zh
 zh我爱你！！！！
+
+速度99%取决于你连接ppy的速度
+pp+就是连接pp+的速度咯
 
 接下来选择你要用的功能，然后按下回车
 1.查询特定铺面
@@ -400,6 +431,8 @@ zh我爱你！！！！
 4.获取最近游玩
 5.获取并列举玩家bp
 6.获取玩家指定bp
+7.获取pp+ (访问很慢)
+
 你的选择：'''))
 
 clearaaaaa = cleanscreen()  # 清屏
@@ -408,10 +441,12 @@ clearaaaaa = cleanscreen()  # 清屏
 try:
     if functionselect == '1':
         bid = str(input('请输入铺面的bid：'))
+        print('尝试查询ing...')
         output = getbeatmap(bid, token)
         print(output)
     elif functionselect == '2':
         playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        print('尝试查询ing...')
         if playerselect == '1':
             playertoget = userid
         elif playerselect == '2':
@@ -422,10 +457,12 @@ try:
         getuser(playertoget, token)
     elif functionselect == '3':
         player_to_search = str(input('请输入玩家名：'))
+        print('尝试查询ing...')
         player_id = str(searchUser(player_to_search, token))
         print('玩家' + player_to_search + '的id为：' + player_id)
     elif functionselect == '4':
         playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        print('尝试查询ing...')
         if playerselect == '1':
             playertoget = userid
             get_user_recent(playertoget, token)
@@ -437,6 +474,7 @@ try:
             exit(0)
     elif functionselect == '5':
         playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        print('尝试查询ing...')
         if playerselect == '1':
             playertoget = userid
             list_user_bp(playertoget, token)
@@ -448,6 +486,7 @@ try:
             exit(0)
     elif functionselect == '6':
         playerselect = str(input('1.你自己\n2.其他玩家\n你的选择：'))
+        print('尝试查询ing...')
         if playerselect == '1':
             playertoget = userid
             get_user_bp(playertoget, token)
@@ -457,12 +496,21 @@ try:
         else:
             input('参数错误，请重新运行\n按下回车退出')
             exit(0)
+    elif functionselect == '7':
+        print('获取中，可能需要亿点时间...(谁让他慢啊！啥时候死了都不知道！）')
+        pp_plus_json = get_pp_plus(userid)
+        clearaaaaa = cleanscreen()  # 清屏
+        print(pp_plus_out(pp_plus_json))
     else:
         raise
-except Exception as e:
+except Exception as e:  # 报错
     clearaaaaa = cleanscreen()  # 清屏
     print("查询出错 以下为错误信息 请提交issue")
     print(e)
+
+input('回车键退出')
+
+####################### 以下为zh摸鱼记录 #######################
+
 #if (platform.system()=='Windows'):
 #    os.system("pause")
-# input('回车键退出')

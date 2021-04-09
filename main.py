@@ -294,7 +294,7 @@ def list_user_bp(userid,accesstoken):
             'Rank: {rank}\n'
             'pp: {pp}\n'
             '是否Perfect： {perfect}\n'
-            '游玩时间： {created_at}\n
+            '游玩时间： {created_at}\n'
             'Replay： {replay}\n'
             '300： {statistics[count_300]}\n'
             '100： {statistics[count_100]}\n'

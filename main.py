@@ -260,7 +260,7 @@ def list_user_bp(userid,accesstoken):
             limit = '5'
     else:
         limit = '5'
-    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit, 'offset':'1'}
+    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit}
     bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
     bp_get_result = bp_url_get_result.text
     bp_json = json.loads(bp_get_result)
@@ -322,7 +322,7 @@ def get_user_bp(userid,accesstoken):
             limit = '1'
     else:
         limit = '1'
-    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit, 'offset':'1'}
+    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit}
     bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
     bp_get_result = bp_url_get_result.text
     bp_json = json.loads(bp_get_result)

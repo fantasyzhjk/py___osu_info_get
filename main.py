@@ -1,24 +1,25 @@
 """查看可以先把能折叠的全部折叠，注释写在外边了"""
-import json
-import requests
-import os
-import platform
+from json import load as json_load
+from json import loads as json_loads
+from requests import post, get
+from platform import system
+from os import system as sysrun
 
 """-------------------------------各种def-------------------------------"""
 
 # zh神写的清屏
-def cleanscreen():
-    if(platform.system()=='Windows'):
-        os.system("cls") #Windows系统
-    elif(platform.system()=='Linux'):
-        os.system('clear') #Linux系统
+def clearscreen():
+    if(system()=='Windows'):
+        sysrun("cls") #Windows系统
+    elif(system()=='Linux'):
+        sysrun('clear') #Linux系统
     else:
         pass
 
 
 # 获取基本信息
 def getbasicinfo(a):
-    data = json.load(open('data/basicinfo.json'))
+    data = json_load(open('data/basicinfo.json'))
     if a == 'name':
         result = data['user']
     elif a == 'userid':
@@ -42,9 +43,9 @@ def get0token(id, pw):
                'Content-Type': 'application/json'}
     body = {"grant_type": "client_credentials",
             "client_id": id, "client_secret": pw, "scope": "public"}
-    index = requests.post(url, headers=headers, json=body, timeout=300)
+    index = post(url, headers=headers, json=body, timeout=300)
     tokenjsontext = index.text
-    jsonn = json.loads(tokenjsontext)
+    jsonn = json_loads(tokenjsontext)
     tokena = jsonn['access_token']
     return tokena
 
@@ -54,10 +55,9 @@ def getbeatmap(bid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
                'Authorization': 'Bearer ' + accesstoken}
     beatmap_url_to_get = 'https://osu.ppy.sh/api/v2/beatmaps/' + bid
-    beatmap_url_get_result = requests.get(
-        url=beatmap_url_to_get, headers=headers)
+    beatmap_url_get_result = get(url=beatmap_url_to_get, headers=headers)
     beatmap_get_result = beatmap_url_get_result.text
-    beatmap_json = json.loads(beatmap_get_result)
+    beatmap_json = json_loads(beatmap_get_result)
     out = ("铺面名称：{beatmapset[title]}\n"
     "艺术家：{beatmapset[artist]}\n"
     "铺面作者：{beatmapset[creator]}\n"
@@ -102,9 +102,11 @@ def searchUser(username, accesstoken):
                'Authorization': 'Bearer ' + accesstoken}
     params = {'mode': 'user', 'query': username}
     user_url_to_get = 'https://osu.ppy.sh/api/v2/search'
-    user_url_get_result = requests.get(url=user_url_to_get, headers=headers, params=params)
+    user_url_get_result = get(url=user_url_to_get, headers=headers, params=params)
     user_get_result = user_url_get_result.text
-    user_json = json.loads(user_get_result)
+    user_json = json_loads(user_get_result)
+    if user_json['user']['data'] == []:
+        raise RuntimeError('咱们找不到这人，要不要看看有没有输错啥')
     return user_json['user']['data'][0]['id']
 
 
@@ -113,9 +115,9 @@ def getuser(userid, accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
                'Authorization': 'Bearer ' + accesstoken}
     user_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/osu'
-    user_url_get_result = requests.get(url=user_url_to_get, headers=headers)
+    user_url_get_result = get(url=user_url_to_get, headers=headers)
     user_get_result = user_url_get_result.text
-    user_json = json.loads(user_get_result)
+    user_json = json_loads(user_get_result)
     # print (user_json) 好家伙zh牛逼
     out = ("-------------------------------------------------------"
     "\n{username}\n"
@@ -129,7 +131,7 @@ def getuser(userid, accesstoken):
     print(out)
     more_info_sec = str(input("想要更详细的信息？按下Y再回车吧！(也可以直接回车走人哦)"))
     if more_info_sec == 'Y' or more_info_sec == 'y':
-        clear_screen = cleanscreen()  # 清屏
+        clear_screen = clearscreen()  # 清屏
         out = ("-------------------------------------------------------\n"
         "用户名：{username}\n"
         "用户id：{id}\n"
@@ -192,10 +194,10 @@ def get_user_recent(userid,accesstoken):
     else:
         limit = '1'
     params = {'include_fails': include_fails, 'mode': 'osu', 'limit': limit, 'offset':'1'}
-    recent_url_get_result = requests.get(url=recent_url_to_get, headers=headers, params=params)
+    recent_url_get_result = get(url=recent_url_to_get, headers=headers, params=params)
     recent_get_result = recent_url_get_result.text
-    recent_json = json.loads(recent_get_result)
-    clearaaaa = cleanscreen()
+    recent_json = json_loads(recent_get_result)
+    clearaaaa = clearscreen()
     # print(recent_json)
     if recent_json != []:
         for recent_score in recent_json:
@@ -250,25 +252,41 @@ def list_user_bp(userid,accesstoken):
     headers = {"Accept": "application/json", "Content-Type": "application/json",
                'Authorization': 'Bearer ' + accesstoken}
     bp_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/scores/best'
+    offset_input = input('请输入从bp几开始（范围1-100 默认bp1)：')
+    if offset_input != '':
+        offset_input = int(offset_input)
+        if offset_input >= 1 and offset_input <= 100:
+            offset = offset_input - 1
+        else:
+            offset = 0
+    else:
+        offset = 0
     # 用户选择查询bp的数量
-    limit_input = input('请输入要查询bp的数量（从bp1开始,范围1-100 默认5)：')
+    limit_input = input(f'请输入要查询bp的数量（从bp{offset + 1}开始,范围1-{100 - offset} 默认5)：')
     if limit_input != '':
         limit_input = int(limit_input)
-        if limit_input >= 1 and limit_input <= 100:
-            limit = str(limit_input)
+        if limit_input >= 1 and limit_input <= 51:
+            limit = limit_input
+        elif limit_input > 51 and limit_input <= 100:
+            limit = 50
+            limit2 = limit_input - 51
         else:
-            limit = '5'
+            limit = 5
     else:
-        limit = '5'
-    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit}
-    bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
-    bp_get_result = bp_url_get_result.text
-    bp_json = json.loads(bp_get_result)
-    clearaaaa = cleanscreen()
+        limit = 5
+
+    print('获取中...')
+    params = {'include_fails': '1', 'mode': 'osu', 'limit': limit, 'offset': offset}
+    bp_url_get_result = get(url=bp_url_to_get, headers=headers, params=params)
+    bp_json = json_loads(bp_url_get_result.text)
+    if 'limit2' in vars():
+        params = {'include_fails': '1', 'mode': 'osu', 'limit': limit2, 'offset': offset + 51}
+        bp_url_get_result = get(url=bp_url_to_get, headers=headers, params=params)
+        bp_json2 = json_loads(bp_url_get_result.text)
+        
+    clearscreen()
     # print(bp_get_result)
-    if bp_json != []:
-        for bp_score in bp_json:
-            out = ('-------------------------------------------------------\n'
+    outstr = ('-------------------------------------------------------\n'
             '分数id： {id}\n\n'
             '标题： {beatmapset[title]}\n'
             '难度： {beatmap[difficulty_rating]}\n'
@@ -300,11 +318,20 @@ def list_user_bp(userid,accesstoken):
             '100： {statistics[count_100]}\n'
             '50： {statistics[count_50]}\n'
             'miss： {statistics[count_miss]}\n'
-            '-------------------------------------------------------').format(**bp_score)
+            '-------------------------------------------------------')
+    if bp_json != []:
+        for bp_score in bp_json:
+            out = outstr.format(**bp_score)
             print(out)
-        print('最上边的是bp1，往下以此类推')
     else:
         print('查询失败')
+        return
+    if 'limit2' in vars():
+        if bp_json2 != []:
+            for bp_score in bp_json2:
+                out = outstr.format(**bp_score)
+                print(out)
+    print('最上边的是bp1，往下以此类推')
 
 
 # 获取玩家指定bp
@@ -313,23 +340,22 @@ def get_user_bp(userid,accesstoken):
                'Authorization': 'Bearer ' + accesstoken}
     bp_url_to_get = 'https://osu.ppy.sh/api/v2/users/' + userid + '/scores/best'
     # 用户选择查询bp的数量
-    limit_input = input('请输入要查询的bp（1-100 默认1)：')
-    if limit_input != '':
-        limit_input = int(limit_input)
-        if limit_input >= 1 and limit_input <= 100:
-            limit = str(limit_input)
+    offset_input = input('请输入要查询的bp（1-100 默认1)：')
+    if offset_input != '':
+        offset_input = int(offset_input)
+        if offset_input >= 1 and offset_input <= 100:
+            offset = offset_input - 1
         else:
-            limit = '1'
+            offset = 0
     else:
-        limit = '1'
-    params = {'include_fails': '0', 'mode': 'osu', 'limit': limit}
-    bp_url_get_result = requests.get(url=bp_url_to_get, headers=headers, params=params)
+        offset = 0
+    params = {'include_fails': '1', 'mode': 'osu', 'limit': 1, 'offset': offset}
+    bp_url_get_result = get(url=bp_url_to_get, headers=headers, params=params)
     bp_get_result = bp_url_get_result.text
-    bp_json = json.loads(bp_get_result)
-    clearaaaa = cleanscreen()
+    bp_json = json_loads(bp_get_result)
+    clearaaaa = clearscreen()
     # print(bp_get_result)
-    limit = int(limit)
-    limit = limit - 1
+    # print(bp_json)
     if bp_json != []:
         out = ('-------------------------------------------------------\n'
         '分数id： {id}\n'
@@ -370,7 +396,7 @@ def get_user_bp(userid,accesstoken):
         '100： {statistics[count_100]}\n'
         '50： {statistics[count_50]}\n'
         'miss： {statistics[count_miss]}\n'
-        '-------------------------------------------------------').format(**bp_json[limit])
+        '-------------------------------------------------------').format(**bp_json[0])
         print(out)
     else:
         print('查询失败')
@@ -379,8 +405,8 @@ def get_user_bp(userid,accesstoken):
 # 获取pp+信息
 def get_pp_plus(userid):    
     url = 'https://syrin.me/pp+/api/user/' + userid + '/'
-    index = requests.get(url=url)
-    pp_plus = json.loads(index.text)
+    index = get(url=url)
+    pp_plus = json_loads(index.text)
     return pp_plus['user_data']
 
 
@@ -388,16 +414,19 @@ def get_pp_plus(userid):
 def pp_plus_out(inputa):
     out = ('-------------------------------------------------------\n'
     '玩家{UserName}的pp+数据如下\n\n'
-    'Total:{PerformanceTotal}\n'
-    'Aim:{AimTotal}\n'
-    'Jump:{JumpAimTotal}\n'
-    'Flow:{FlowAimTotal}\n'
-    'Precision:{PrecisionTotal}\n'
-    'Speed:{SpeedTotal}\n'
-    'Stamina:{StaminaTotal}\n'
-    'Accuracy:{AccuracyTotal}\n'
+    'Total:      {PerformanceTotal:.2f}\n'
+    'Aim:        {AimTotal:.2f}\n'
+    'Jump:       {JumpAimTotal:.2f}\n'
+    'Flow:       {FlowAimTotal:.2f}\n'
+    'Precision:  {PrecisionTotal:.2f}\n'
+    'Speed:      {SpeedTotal:.2f}\n'
+    'Stamina:    {StaminaTotal:.2f}\n'
+    'Accuracy:   {AccuracyTotal:.2f}\n'
     '-------------------------------------------------------').format(**inputa)
     return out
+
+
+
 
 """-------------------------------程序主体-------------------------------"""
 
@@ -413,7 +442,7 @@ token = get0token(oauthid, oauthpw)
 
 print('Done')
 
-clearaaaaa = cleanscreen()  # 清屏
+clearscreen()  # 清屏
 
 # 选择功能
 functionselect = str(input('''欢迎使用，本程序98%由zh编写
@@ -435,7 +464,7 @@ pp+就是连接pp+的速度咯
 
 你的选择：'''))
 
-clearaaaaa = cleanscreen()  # 清屏
+clearscreen()  # 清屏
 
 # 功能实现
 try:
@@ -499,12 +528,12 @@ try:
     elif functionselect == '7':
         print('获取中，可能需要亿点时间...(谁让他慢啊！啥时候死了都不知道！）')
         pp_plus_json = get_pp_plus(userid)
-        clearaaaaa = cleanscreen()  # 清屏
+        clearscreen()  # 清屏
         print(pp_plus_out(pp_plus_json))
     else:
         raise
 except Exception as e:  # 报错
-    clearaaaaa = cleanscreen()  # 清屏
+    # clearscreen()  # 清屏
     print("查询出错 以下为错误信息 请提交issue")
     print(e)
 
@@ -512,5 +541,5 @@ input('回车键退出')
 
 ####################### 以下为zh摸鱼记录 #######################
 
-#if (platform.system()=='Windows'):
+#if (system()=='Windows'):
 #    os.system("pause")
